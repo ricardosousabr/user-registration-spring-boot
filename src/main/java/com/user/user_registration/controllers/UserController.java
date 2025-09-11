@@ -25,6 +25,11 @@ public class UserController {
 		return userService.getAllUser();
 	}
 	
+	@GetMapping(value = "/getUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public User getUser(@PathVariable Long id){
+		return userService.getUser(id);
+	}
+	
 	@PostMapping(value = "/createUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public User createNewUser(@RequestBody User user) {
 		return userService.createNewUser(user);

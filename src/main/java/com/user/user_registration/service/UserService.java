@@ -20,6 +20,10 @@ public class UserService {
 		return userRepository.findAll();
 	}
 	
+	public User getUser(@PathVariable Long id) {
+		return userRepository.findById(id).orElseThrow();
+	}
+	
 	public User createNewUser(@RequestBody User user) {
 		 User createUser = new User();
 		 
