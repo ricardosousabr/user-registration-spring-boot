@@ -6,8 +6,6 @@ import com.user.user_registration.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.print.attribute.standard.Media;
 import java.awt.*;
 import java.util.List;
 
@@ -20,28 +18,31 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-	@GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<User> getAllUser() {
 		return userService.getAllUser();
 	}
 	
-	@GetMapping(value = "/getUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public User getUser(@PathVariable Long id){
 		return userService.getUser(id);
 	}
 	
-	@PostMapping(value = "/createUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public User createNewUser(@RequestBody User user) {
 		return userService.createNewUser(user);
 	}
 	
-	@PutMapping(value = "/updateUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public User updateUser(@RequestBody User user) {
-		return userService.updateUser(user);
-	}
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public User updateUser(@PathVariable Long id, @RequestBody User user) { return userService.updateUser(id, user); }
 	
-	@DeleteMapping(value = "/deleteUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public User deleteUser(@PathVariable Long id) {
 		return userService.deleteUser(id);
+	}
+	
+	@PatchMapping(value = "/{id}")
+	public User patchUser(@PathVariable Long id, @RequestBody User user) {
+		return userService.patchUser(id, user);
 	}
 }

@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
 @Setter
 @Getter
+@Accessors(chain = true)
 @Entity
 @Table(name = "user")
 @EqualsAndHashCode(of = "id")
@@ -24,7 +26,7 @@ public class User implements Serializable {
 	private String email;
 	
 	@Column(nullable = false)
-	private int age;
+	private Integer age;
 	
 	public User() {}
 	
