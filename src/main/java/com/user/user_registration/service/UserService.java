@@ -3,11 +3,7 @@ package com.user.user_registration.service;
 import com.user.user_registration.models.User;
 import com.user.user_registration.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -20,38 +16,49 @@ public class UserService {
 		return userRepository.findAll();
 	}
 	
-	public User getUser(@PathVariable Long id) {
+	public User getUser(Long id) {
 		return userRepository.findById(id).orElseThrow();
 	}
 	
-	public User createNewUser(@RequestBody User user) {
-		 User createUser = new User();
+	public User createNewUser(User user) {
 		 
-		 createUser.setName(user.getName());
-		 createUser.setEmail(user.getEmail());
-		 createUser.setAge(user.getAge());
-		 
-		 return userRepository.save(createUser);
+		 return userRepository.save(user);
 	}
 	
-	public User updateUser(@RequestBody User user) {
-		User getUser = userRepository.findById(user.getId()).orElseThrow();
-		User updateddUser = new User();
+	public User updateUser(Long id, User user) {
+		User getUser = userRepository.findById(id).orElseThrow();
 		
-		updateddUser.setId(user.getId());
-		updateddUser.setName(user.getName());
-		updateddUser.setEmail(user.getEmail());
-		updateddUser.setAge(user.getAge());
-		
-		return userRepository.save(updateddUser);
+		getUser
+				.setName(user.getName())
+				.setAge(user.getAge())
+				.setEmail(user.getEmail());
+
+		return userRepository.save(getUser);
 	}
 	
-	public User deleteUser(@PathVariable Long id) {
+	public User deleteUser(Long id) {
 		User getUser = userRepository.findById(id).orElseThrow();
 		
 		userRepository.delete(getUser);
 		
 		return getUser;
+	}
+	
+	public User patchUser(Long id, User user) {
+		User existingUser = userRepository.findById(id).orElseThrow();
+		
+		if (user.getName() != null) {
+			existingUser.setName(user.getName());
+		}
+		if (user.getAge() != null) {
+			existingUser.setAge(user.getAge());
+		}
+		if (user.getEmail() != null) {
+			existingUser.setEmail(user.getEmail());
+		}
+		
+		return userRepository.save(existingUser);
+		
 	}
 	
 	public UserService() {};
