@@ -1,5 +1,6 @@
 package com.user.user_registration.configs;
 
+import com.user.user_registration.models.User;
 import com.user.user_registration.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,11 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -29,10 +29,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 		
 		if (token != null) {
 			var login = tokenService.validationToken(token);
-			UserDetails user = userRepository.findByEmail(login);
+			var userOptional = userRepository.findByEmail(login);
 			
-			var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			if (userOptional.isPresent()) {
+				User user = userOptional.get();
+				var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				
+			}
+			
 		}
 		filterChain.doFilter(request, response);
 	}
