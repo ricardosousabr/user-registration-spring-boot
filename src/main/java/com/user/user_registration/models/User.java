@@ -57,7 +57,7 @@ public class User implements Serializable, UserDetails {
 	public User(String name, Integer age, String login, String password, UserRole role ) {
 		this.name = name;
 		this.age = age;
-		this.email = login;
+		this.email = login.toLowerCase();
 		this.password = password;
 		this.role = role;
 		
