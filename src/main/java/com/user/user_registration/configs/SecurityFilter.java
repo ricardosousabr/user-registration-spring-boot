@@ -1,5 +1,6 @@
 package com.user.user_registration.configs;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.user.user_registration.models.User;
 import com.user.user_registration.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -8,10 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -28,15 +32,16 @@ public class SecurityFilter extends OncePerRequestFilter {
 		var token = this.recoverToken(request);
 		
 		if (token != null) {
-			var login = tokenService.validationToken(token);
-			var userOptional = userRepository.findByEmail(login);
+			DecodedJWT jwt = tokenService.validateTokenAndGetClaims(token);
+			Long userId = jwt.getClaim("id").asLong();
+			String role = jwt.getClaim("role").asString();
 			
-			if (userOptional.isPresent()) {
-				User user = userOptional.get();
-				var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-				
-			}
+			List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+			
+			UsernamePasswordAuthenticationToken authenticationToken =
+					new UsernamePasswordAuthenticationToken(userId, null, authorities);
+			
+			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			
 		}
 		filterChain.doFilter(request, response);

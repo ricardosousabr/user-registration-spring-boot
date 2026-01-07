@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.user.user_registration.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,35 +15,36 @@ import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
-	@Value("${api.securyt.token.secret}")
+	@Value("${api.security.token.secret}")
 	private String secret;
 	
 	public String generateToken(User user) {
 		try {
-		Algorithm algorithm = Algorithm.HMAC256(secret);
-		String token = JWT.create()
-				.withIssuer("user-registration")
-				.withSubject(user.getEmail())
-				.withExpiresAt(generateExpirationDate())
-				.sign(algorithm);
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			String token = JWT.create()
+					.withIssuer("user-registration")
+					.withSubject(user.getEmail())
+					.withClaim("id", user.getId())
+					.withClaim("role", user.getRole().name())
+					.withExpiresAt(generateExpirationDate())
+					.sign(algorithm);
 		
-		return token;
+			return token;
 		
 		} catch (JWTCreationException exception) {
 			throw new RuntimeException("Error while generation token", exception);
 		}
 	}
 	
-	public String validationToken(String token) {
+	public DecodedJWT validateTokenAndGetClaims(String token) {
 		try {
 			Algorithm algorithm = Algorithm.HMAC256(secret);
 			return JWT.require(algorithm)
 					.withIssuer("user-registration")
 					.build()
-					.verify(token)
-					.getSubject();
+					.verify(token);
 		} catch (JWTVerificationException exception) {
-			return "";
+			throw new RuntimeException("Token invalido");
 		}
 	}
 	
