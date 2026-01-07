@@ -33,10 +33,6 @@ public class AuthenticationService {
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
 	
-	@Autowired
-	UserAuthenticated userAuthenticated;
-	
-	
 	public ResponseEntity login(AuthenticationDTO data) {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
 		var auth = this.authenticationManager.authenticate(usernamePassword);
