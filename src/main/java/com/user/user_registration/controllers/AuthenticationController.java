@@ -26,15 +26,15 @@ public class AuthenticationController {
 		return ResponseEntity.status(201).body("Usuário registrado com sucesso");
 	}
 	
-	@PutMapping("/update")
-	public ResponseEntity update(@RequestBody UpdateDTO data) {
-		authenticationService.updateUser(data);
+	@PutMapping("/update/{id}")
+	public ResponseEntity update(@PathVariable(required = false) Long id , @RequestBody UpdateDTO data) {
+		authenticationService.updateUser(id, data);
 		
 		return ResponseEntity.ok("Usuário atualizado com sucesso");
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity delete(@PathVariable Long id) {
+	public ResponseEntity delete(@PathVariable(required = false) Long id) {
 		authenticationService.deleteUser(id);
 		
 		return ResponseEntity.ok("usuário deletado com sucesso");
